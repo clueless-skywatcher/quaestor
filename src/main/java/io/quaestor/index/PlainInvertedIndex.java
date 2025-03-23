@@ -8,17 +8,20 @@ import java.util.Map;
 
 import io.quaestor.document.TextDoc;
 import io.quaestor.fields.AbstractField;
+import io.quaestor.schema.IndexSchema;
 import io.quaestor.tokenizer.AbstractTokenizer;
 
 public class PlainInvertedIndex implements AbstractIndex {
     private Map<String, Map<String, Set<Integer>>> index;
     private Map<Integer, TextDoc> documents;
     private AbstractTokenizer tokenizer;
+    private IndexSchema schema;
 
     private AtomicInteger idToUse = new AtomicInteger(1);
 
-    public PlainInvertedIndex(AbstractTokenizer tokenizer) {
+    public PlainInvertedIndex(AbstractTokenizer tokenizer, IndexSchema schema) {
         this();
+        this.schema = schema;
         this.tokenizer = tokenizer;
     }
 
@@ -27,7 +30,11 @@ public class PlainInvertedIndex implements AbstractIndex {
         this.documents = new HashMap<>();
     }
 
-    public void addDocument(TextDoc doc) {
+    public void addDocument(TextDoc doc) throws Exception {
+        if (!doc.getFieldNames().equals(new HashSet<>(schema.getFields()))) {
+            throw new Exception("Doc does not conform to schema");
+        }
+
         doc.setId(idToUse.getAndIncrement());
         documents.put(doc.getId(), doc);
         for (String fieldName: doc.getFieldNames()) {

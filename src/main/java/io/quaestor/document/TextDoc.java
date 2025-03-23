@@ -5,14 +5,17 @@ import java.util.Map;
 import java.util.Set;
 
 import io.quaestor.fields.AbstractField;
+import io.quaestor.schema.IndexSchema;
 import lombok.Getter;
 import lombok.Setter;
 
 public class TextDoc {
     private Map<String, AbstractField> fields;
     private @Getter @Setter int id;
+    private IndexSchema schema;
 
-    public TextDoc() {
+    public TextDoc(IndexSchema schema) {
+        this.schema = schema;
         this.fields = new HashMap<>();
     }
 
@@ -20,7 +23,10 @@ public class TextDoc {
         return fields.get(key).getContent();
     }
 
-    public void addField(AbstractField field) {
+    public void addField(AbstractField field) throws Exception {
+        if (!schema.contains(field.getName())) {
+            throw new Exception("Invalid fieldName: " + field.getName());
+        }
         this.fields.put(field.getName(), field);
     }
 

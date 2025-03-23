@@ -15,43 +15,43 @@ import io.quaestor.ranking.TFIDFRanking;
 import io.quaestor.tokenizer.AbstractTokenizer;
 import io.quaestor.tokenizer.BasicTokenizer;
 
-public class RankSearcher {
+public class SingleWordRankSearcher implements AbstractRankSearcher {
     private AbstractIndex index;
     private RankingAlgorithm algorithm;
     private AbstractTokenizer tokenizer;
 
-    public RankSearcher(AbstractIndex index) {
+    public SingleWordRankSearcher(AbstractIndex index) {
         this.index = index;
         this.tokenizer = new BasicTokenizer();
     }
 
-    public RankSearcher(AbstractIndex index, AbstractTokenizer tokenizer) {
+    public SingleWordRankSearcher(AbstractIndex index, AbstractTokenizer tokenizer) {
         this.index = index;
         this.algorithm = new TFIDFRanking(tokenizer);
         this.tokenizer = tokenizer;
     }
 
-    public RankSearcher(AbstractIndex index, RankingAlgorithm algorithm) {
+    public SingleWordRankSearcher(AbstractIndex index, RankingAlgorithm algorithm) {
         this.index = index;
         this.algorithm = algorithm;
         this.tokenizer = new BasicTokenizer();
     }
 
-    public RankSearcher(AbstractIndex index, RankingAlgorithm algorithm, AbstractTokenizer tokenizer) {
+    public SingleWordRankSearcher(AbstractIndex index, RankingAlgorithm algorithm, AbstractTokenizer tokenizer) {
         this.index = index;
         this.algorithm = algorithm;
         this.tokenizer = tokenizer;
     }
 
-    public RankSearcher(AbstractIndexMaker indexMaker) {
+    public SingleWordRankSearcher(AbstractIndexMaker indexMaker) {
         this(indexMaker.getIndex(), new BasicTokenizer());
     }
 
-    public RankSearcher(AbstractIndexMaker indexer, AbstractTokenizer tokenizer) {
+    public SingleWordRankSearcher(AbstractIndexMaker indexer, AbstractTokenizer tokenizer) {
         this(indexer.getIndex(), tokenizer);
     }
 
-    public RankSearcher(AbstractIndexMaker indexer, RankingAlgorithm algorithm, AbstractTokenizer tokenizer) {
+    public SingleWordRankSearcher(AbstractIndexMaker indexer, RankingAlgorithm algorithm, AbstractTokenizer tokenizer) {
         this(indexer.getIndex(), algorithm, tokenizer);
     }
 

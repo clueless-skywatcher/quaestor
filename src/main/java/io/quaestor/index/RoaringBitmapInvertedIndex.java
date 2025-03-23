@@ -9,28 +9,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.quaestor.document.TextDoc;
 import io.quaestor.fields.AbstractField;
 import io.quaestor.idsets.roaring.RoaringBitmapIDSet;
+import io.quaestor.schema.IndexSchema;
 import io.quaestor.tokenizer.AbstractTokenizer;
 
 public class RoaringBitmapInvertedIndex implements AbstractIndex {
     private Map<String, Map<String, RoaringBitmapIDSet>> index;
     private Map<Integer, TextDoc> documents;
     private AbstractTokenizer tokenizer;
+    private IndexSchema schema;
 
     private AtomicInteger idToUse = new AtomicInteger(1);
 
-    public RoaringBitmapInvertedIndex(AbstractTokenizer tokenizer) {
-        this();
+    public RoaringBitmapInvertedIndex(AbstractTokenizer tokenizer, IndexSchema schema) {
+        this.schema = schema;
         this.tokenizer = tokenizer;
-    }
-
-    public RoaringBitmapInvertedIndex() {
-        this.index = new HashMap<>();
         this.documents = new HashMap<>();
+        this.index = new HashMap<>();
     }
-
 
     @Override
-    public void addDocument(TextDoc doc) {
+    public void addDocument(TextDoc doc) throws Exception {
+        if (!doc.getFieldNames().equals(new HashSet<>(schema.getFields()))) {
+            throw new Exception("Doc does not conform to schema");
+        }
+
         doc.setId(idToUse.getAndIncrement());
         documents.put(doc.getId(), doc);
         for (String fieldName: doc.getFieldNames()) {
